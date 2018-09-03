@@ -8,9 +8,17 @@ This walkthrough assumes a fresh Xubuntu 16.04 LTS installation. Running this
 demonstration in a VM is recommended to configure the RAM size, which is relevant
 for LiME RAM images (1GB recommended).
 
-Install the following dependencies from the Ubuntu repos:
+1. Install the following dependencies from the Ubuntu repos:
 ```
-$ sudo apt-get install
+$ sudo apt-get install make gcc libelf-dev dwarfdump
+```
+
+2. Clone the code repo and submodules.
+```
+$ git clone http://.../infosession_demo.git
+...
+$ cd infosession_demo
+$ git submodule update --init --recursive
 ```
 
 ## WALKTHROUGH
@@ -29,7 +37,7 @@ $ make
 
 2. Load lime.ko to acquire RAM image. Unload after.
 ```
-$ sudo insmod ./lime.ko "path=./ram.lime format=lime"
+$ sudo insmod ./lime-$(uname -r).ko "path=./ram.lime format=lime"
 $ sudo rmmod lime.ko
 ```
 
@@ -63,7 +71,6 @@ $ python vol.py -h
 $ cd volatility/tools/linux
 $ PROFILE=$(uname -n)-$(uname -r).zip
 $ sudo make -C /lib/modules/$(uname -r)/build CONFIG_DEBUG_INFO=y M=$PWD modules
-$ sudo chown user:user Module.symvers
 $ dwarfdump -di ./module.o > module.dwarf
 $ sudo zip $PROFILE module.dwarf /boot/System.map-$(uname -r)
 $ cp $PROFILE ../../volatility/plugins/overlays/linux/
@@ -101,7 +108,7 @@ $ ./hideme
 Press ENTER to exit
 
 [second terminal]
-$ sudo insmod ./lime.ko "path=./nohide.lime format=lime"
+$ sudo insmod ./lime-$(uname -r).ko "path=./nohide.lime format=lime"
 $ sudo rmmod lime.ko
 ```
 
@@ -112,7 +119,8 @@ removing myself from task list: 5388
 Press ENTER to exit
 
 [second terminal]
-$ sudo insmod ./lime.ko "path=./hide.lime format=lime"
+
+$ sudo insmod ./lime-$(uname -r).ko "path=./hide.lime format=lime"
 $ sudo rmmod lime.ko
 ```
 
